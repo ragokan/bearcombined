@@ -1,3 +1,4 @@
+import create from "."
 import { GetState, PartialState, SetState, State, StateCreator, StoreApi } from "./vanilla"
 
 export const redux = <S extends State, A extends { type: unknown }>(
@@ -223,12 +224,14 @@ export const persist = <S extends State>(config: StateCreator<S>, options: Persi
   )
 }
 
-export const combineStores = <TState extends State>(...storesToCombine: StoreApi<any>[]): StateCreator<TState> => {
-  let values: TState
+export const createCombined = <TState extends State>(...storesToCombine: StoreApi<any>[]): StoreApi<TState> => {
+  let values: any = {}
 
   storesToCombine.forEach((store) => {
     values = Object.assign({}, values, store.getState())
   })
 
-  return (set, get, api) => values
+  const store = create<TState>((get, set, api) => ({ ...values }))
+
+  return store
 }
