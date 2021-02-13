@@ -7,9 +7,9 @@ import { ITodoState, TodoState } from "./TodoState"
 
 type CombinedStoreType = ICounterState & ITodoState & IPokemonState
 
-const combinedStore = combineStores<CombinedStoreType>(CounterState, TodoState, PokemonState)
-
-export const useCombinedStore = create(devtools(combinedStore))
+export const useCombinedStore = create<CombinedStoreType>(
+  devtools(combineStores(CounterState, TodoState, PokemonState))
+)
 
 export const setCombinedState = (partial: PartialState<CombinedStoreType>) => useCombinedStore.setState(partial)
 export const getCombinedState = useCombinedStore.getState
