@@ -1,17 +1,40 @@
-import React from "react"
+import React, { useState } from "react"
 import "./App.css"
 import "./state"
 import { setCombinedState, useCombinedStore } from "./state"
 
 function App() {
-  const { count, increment } = useCombinedStore()
+  const [todoText, setTodoText] = useState<string>("")
+  const [pokemonText, setPokemonText] = useState<string>("")
+  const { count, increment, todos, addTodo, pokemons, addPokemon, filterTodos } = useCombinedStore()
 
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Counter: {count}!</h1>
+      <header>
+        <h2>Counter</h2>
+        <h4>{count}</h4>
         <button onClick={() => increment()}>Increment</button>
         <button onClick={() => setCombinedState({ count: count - 1 })}>Decrement</button>
+        <hr />
+        <h2>Todos</h2>
+        <ul>
+          {todos.map((todo) => (
+            <li key={todo.id}>
+              {todo.text} <button onClick={() => filterTodos(todo.id)}>Click to remove</button>
+            </li>
+          ))}
+        </ul>
+        <input value={todoText} onChange={(e) => setTodoText(e.target.value)} placeholder="Todo Text" />
+        <button onClick={() => addTodo(todoText)}>Add</button>
+        <hr />
+        <h2>Pokemons</h2>
+        <ol>
+          {pokemons.map((pokemon, index) => (
+            <li key={index}>{pokemon}</li>
+          ))}
+        </ol>
+        <input value={pokemonText} onChange={(e) => setPokemonText(e.target.value)} placeholder="Pokemon Name" />
+        <button onClick={() => addPokemon(pokemonText)}>Add</button>
       </header>
     </div>
   )

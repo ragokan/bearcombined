@@ -7,6 +7,6 @@ export interface IPokemonState extends State {
 }
 
 export const PokemonState = create<IPokemonState>((set, get, api) => ({
-  pokemons: [],
+  pokemons: ["Pikachu"],
   addPokemon: (name) => set((prev) => ({ pokemons: [name, ...prev.pokemons] })),
 }))
