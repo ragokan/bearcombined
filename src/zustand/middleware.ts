@@ -224,28 +224,13 @@ export const persist = <S extends State>(config: StateCreator<S>, options: Persi
   )
 }
 
-export const createCombined = <TState extends State>(
-  storesToCombine: StoreApi<any>[],
-  useDevTools?: boolean
-): StoreApi<TState> => {
+export const combineStores = <TState extends State>(...storesToCombine: StoreApi<any>[]): StateCreator<TState> => {
   let values: any = {}
 
-  function giveStateApi<TState extends State>(set: SetState<TState>, get: GetState<TState>, api: StoreApi<TState>) {
+  return (set: SetState<TState>, get: GetState<TState>, api: StoreApi<TState>) => {
     storesToCombine.forEach((store) => {
       values = Object.assign({}, values, store.getRoot(set, get, api))
     })
+    return values
   }
-
-  const store = useDevTools
-    ? create<TState>(
-        devtools((set, get, api) => {
-          giveStateApi<TState>(set, get, api)
-          return { ...values }
-        })
-      )
-    : create<TState>((set, get, api) => {
-        giveStateApi<TState>(set, get, api)
-        return { ...values }
-      })
-  return store
 }
