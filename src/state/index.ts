@@ -4,7 +4,7 @@ import { CounterState, ICounterState } from "./CounterState"
 import { ITodoState, TodoState } from "./TodoState"
 
 type CombinedStoreType = ICounterState & ITodoState
-export const useCombinedStore = createCombined<CombinedStoreType>(CounterState, TodoState)
+export const useCombinedStore = createCombined<CombinedStoreType>([CounterState, TodoState], true)
 
 export const setCombinedState = (partial: PartialState<CombinedStoreType>) => useCombinedStore.setState(partial)
 export const getCombinedState = useCombinedStore.getState
