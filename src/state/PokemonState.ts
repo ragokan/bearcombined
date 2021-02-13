@@ -1,7 +1,7 @@
 import { State } from "../zustand"
 import create from "../zustand"
 
-interface IPokemonState extends State {
+export interface IPokemonState extends State {
   pokemons: string[]
   addPokemon: (name: string) => void
 }

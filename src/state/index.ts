@@ -2,10 +2,10 @@ import { PartialState } from "../zustand"
 import { combineStores, devtools } from "../zustand/middleware"
 import create from "../zustand"
 import { CounterState, ICounterState } from "./CounterState"
-import { PokemonState } from "./PokemonState"
+import { PokemonState, IPokemonState } from "./PokemonState"
 import { ITodoState, TodoState } from "./TodoState"
 
-type CombinedStoreType = ICounterState & ITodoState
+type CombinedStoreType = ICounterState & ITodoState & IPokemonState
 const combinedStore = combineStores<CombinedStoreType>(CounterState, TodoState, PokemonState)
 export const useCombinedStore = create(devtools(combinedStore))
 
