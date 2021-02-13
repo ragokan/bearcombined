@@ -1,5 +1,4 @@
 import create, { State } from "../zustand"
-import { devtools } from "../zustand/middleware"
 
 interface ITodo {
   text: string
@@ -10,9 +9,7 @@ export interface ITodoState extends State {
   addTodo: (text: string) => void
 }
 
-export const TodoState = create<ITodoState>(
-  devtools((set, get, api) => ({
-    todos: [],
-    addTodo: (text) => set((prev) => ({ todos: [...prev.todos, { text }] })),
-  }))
-)
+export const TodoState = create<ITodoState>((set, get, api) => ({
+  todos: [],
+  addTodo: (text) => set((prev) => ({ todos: [...prev.todos, { text }] })),
+}))

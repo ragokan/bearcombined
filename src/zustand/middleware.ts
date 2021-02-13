@@ -231,5 +231,4 @@ export const combineStores = <TState extends State>(...storesToCombine: StoreApi
   })
 
   return (set, get, api) => values
-  // Object.values(values).forEach((val) => (typeof val === "function" ? val(set, get, api) : val))
 }
