@@ -1,5 +1,6 @@
 import React from "react"
 import "./App.css"
+import "./state"
 import { CounterState, setCounterState } from "./state/CounterState"
 
 function App() {

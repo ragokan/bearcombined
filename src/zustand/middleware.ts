@@ -222,3 +222,16 @@ export const persist = <S extends State>(config: StateCreator<S>, options: Persi
     api
   )
 }
+
+export const combineStores = <TState extends State>(...storesToCombine: StoreApi<any>[]): StateCreator<TState> => {
+  let values: TState
+
+  storesToCombine.forEach((store) => {
+    values = Object.assign({}, values, store.getState())
+  })
+
+  return (set, get, api) => {
+    Object.values(values).forEach((val) => (typeof val === "function" ? val(set, get, api) : val))
+    return values
+  }
+}
