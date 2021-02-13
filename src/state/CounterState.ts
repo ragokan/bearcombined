@@ -7,5 +7,7 @@ export interface ICounterState extends State {
 
 export const CounterState = create<ICounterState>((set, get, api) => ({
   count: 0,
-  increment: () => set((prev) => ({ count: prev.count + 1 })),
+  increment() {
+    set((prev) => ({ count: prev.count + 1 }))
+  },
 }))

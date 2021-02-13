@@ -19,6 +19,7 @@ export interface StoreApi<T extends State> {
   setState: SetState<T>
   getState: GetState<T>
   subscribe: Subscribe<T>
+  getRoot: StateCreator<T>
   destroy: Destroy
 }
 export type StateCreator<T extends State, CustomSetState = SetState<T>> = (
@@ -41,6 +42,8 @@ export default function create<TState extends State>(createState: StateCreator<T
   }
 
   const getState: GetState<TState> = () => state
+
+  const getRoot: StateCreator<TState> = createState
 
   const subscribeWithSelector = <StateSlice>(
     listener: StateSliceListener<StateSlice>,
@@ -74,7 +77,7 @@ export default function create<TState extends State>(createState: StateCreator<T
   }
 
   const destroy: Destroy = () => listeners.clear()
-  const api = { setState, getState, subscribe, destroy }
+  const api = { setState, getState, subscribe, destroy, getRoot }
   state = createState(setState, getState, api)
   return api
 }
