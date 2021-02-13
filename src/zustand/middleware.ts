@@ -230,8 +230,6 @@ export const combineStores = <TState extends State>(...storesToCombine: StoreApi
     values = Object.assign({}, values, store.getState())
   })
 
-  return (set, get, api) => {
-    Object.values(values).forEach((val) => (typeof val === "function" ? val(set, get, api) : val))
-    return values
-  }
+  return (set, get, api) => values
+  // Object.values(values).forEach((val) => (typeof val === "function" ? val(set, get, api) : val))
 }

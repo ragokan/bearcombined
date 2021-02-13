@@ -1,4 +1,4 @@
-import create, { PartialState, State } from "../zustand"
+import create, { State } from "../zustand"
 import { devtools } from "../zustand/middleware"
 
 interface ITodo {
@@ -16,7 +16,3 @@ export const TodoState = create<ITodoState>(
     addTodo: (text) => set((prev) => ({ todos: [...prev.todos, { text }] })),
   }))
 )
-
-export const setTodoState = (partial: PartialState<ITodoState>) => TodoState.setState(partial)
-export const getTodoState = TodoState.getState
-export const subTodoState = TodoState.subscribe

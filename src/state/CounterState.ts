@@ -1,4 +1,4 @@
-import create, { PartialState, State } from "../zustand"
+import create, { State } from "../zustand"
 import { devtools } from "../zustand/middleware"
 
 export interface ICounterState extends State {
@@ -12,7 +12,3 @@ export const CounterState = create<ICounterState>(
     increment: () => set((prev) => ({ count: prev.count + 1 })),
   }))
 )
-
-export const setCounterState = (partial: PartialState<ICounterState>) => CounterState.setState(partial)
-export const getCounterState = CounterState.getState
-export const subCounterState = CounterState.subscribe
