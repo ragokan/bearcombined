@@ -1,9 +1,6 @@
 {
   "name": "bearcombined",
   "version": "0.0.0",
-  "engines": {
-    "node": "12.0.0"
-  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
