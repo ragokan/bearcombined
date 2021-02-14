@@ -1,11 +1,4 @@
-import {
-  GetState,
-  PartialState,
-  SetState,
-  State,
-  StateCreator,
-  StoreApi,
-} from './vanilla'
+import { GetState, PartialState, SetState, State, StateCreator, StoreApi } from "./vanilla"
 
 export const redux = <S extends State, A extends { type: unknown }>(
   reducer: (state: S, action: A) => S,
@@ -28,33 +21,20 @@ export const redux = <S extends State, A extends { type: unknown }>(
   return { dispatch: api.dispatch, ...initial }
 }
 
-type NamedSet<S extends State> = (
-  partial: PartialState<S>,
-  replace?: boolean,
-  name?: string
-) => void
+type NamedSet<S extends State> = (partial: PartialState<S>, replace?: boolean, name?: string) => void
 
 export const devtools = <S extends State>(
   fn: (set: NamedSet<S>, get: GetState<S>, api: StoreApi<S>) => S,
   prefix?: string
-) => (
-  set: SetState<S>,
-  get: GetState<S>,
-  api: StoreApi<S> & { dispatch?: unknown; devtools?: any }
-): S => {
+) => (set: SetState<S>, get: GetState<S>, api: StoreApi<S> & { dispatch?: unknown; devtools?: any }): S => {
   let extension
   try {
-    extension =
-      (window as any).__REDUX_DEVTOOLS_EXTENSION__ ||
-      (window as any).top.__REDUX_DEVTOOLS_EXTENSION__
+    extension = (window as any).__REDUX_DEVTOOLS_EXTENSION__ || (window as any).top.__REDUX_DEVTOOLS_EXTENSION__
   } catch {}
 
   if (!extension) {
-    if (
-      process.env.NODE_ENV === 'development' &&
-      typeof window !== 'undefined'
-    ) {
-      console.warn('Please install/enable Redux devtools extension')
+    if (process.env.NODE_ENV === "development" && typeof window !== "undefined") {
+      console.warn("Please install/enable Redux devtools extension")
     }
     api.devtools = null
     return fn(set, get, api)
@@ -62,7 +42,7 @@ export const devtools = <S extends State>(
   const namedSet: NamedSet<S> = (state, replace, name) => {
     set(state, replace)
     if (!api.dispatch) {
-      api.devtools.send(api.devtools.prefix + (name || 'action'), get())
+      api.devtools.send(api.devtools.prefix + (name || "action"), get())
     }
   }
   const initialState = fn(namedSet, get, api)
@@ -70,24 +50,19 @@ export const devtools = <S extends State>(
     const savedSetState = api.setState
     api.setState = (state: PartialState<S>, replace?: boolean) => {
       savedSetState(state, replace)
-      api.devtools.send(api.devtools.prefix + 'setState', api.getState())
+      api.devtools.send(api.devtools.prefix + "setState", api.getState())
     }
     api.devtools = extension.connect({ name: prefix })
-    api.devtools.prefix = prefix ? `${prefix} > ` : ''
+    api.devtools.prefix = prefix ? `${prefix} > ` : ""
     api.devtools.subscribe((message: any) => {
-      if (message.type === 'DISPATCH' && message.state) {
-        const ignoreState =
-          message.payload.type === 'JUMP_TO_ACTION' ||
-          message.payload.type === 'JUMP_TO_STATE'
+      if (message.type === "DISPATCH" && message.state) {
+        const ignoreState = message.payload.type === "JUMP_TO_ACTION" || message.payload.type === "JUMP_TO_STATE"
         if (!api.dispatch && !ignoreState) {
           api.setState(JSON.parse(message.state))
         } else {
           savedSetState(JSON.parse(message.state))
         }
-      } else if (
-        message.type === 'DISPATCH' &&
-        message.payload?.type === 'COMMIT'
-      ) {
+      } else if (message.type === "DISPATCH" && message.payload?.type === "COMMIT") {
         api.devtools.init(api.getState())
       }
     })
@@ -96,25 +71,14 @@ export const devtools = <S extends State>(
   return initialState
 }
 
-export const combine = <
-  PrimaryState extends State,
-  SecondaryState extends State
->(
+export const combine = <PrimaryState extends State, SecondaryState extends State>(
   initialState: PrimaryState,
-  create: (
-    set: SetState<PrimaryState>,
-    get: GetState<PrimaryState>,
-    api: StoreApi<PrimaryState>
-  ) => SecondaryState
+  create: (set: SetState<PrimaryState>, get: GetState<PrimaryState>, api: StoreApi<PrimaryState>) => SecondaryState
 ): StateCreator<PrimaryState & SecondaryState> => (set, get, api) =>
   Object.assign(
     {},
     initialState,
-    create(
-      set as SetState<PrimaryState>,
-      get as GetState<PrimaryState>,
-      api as StoreApi<PrimaryState>
-    )
+    create(set as SetState<PrimaryState>, get as GetState<PrimaryState>, api as StoreApi<PrimaryState>)
   )
 
 type StateStorage = {
@@ -168,10 +132,11 @@ type PersistOptions<S> = {
   version?: number
 }
 
-export const persist = <S extends State>(
-  config: StateCreator<S>,
-  options: PersistOptions<S>
-) => (set: SetState<S>, get: GetState<S>, api: StoreApi<S>): S => {
+export const persist = <S extends State>(config: StateCreator<S>, options: PersistOptions<S>) => (
+  set: SetState<S>,
+  get: GetState<S>,
+  api: StoreApi<S>
+): S => {
   const {
     name,
     getStorage = () => localStorage,
@@ -194,9 +159,7 @@ export const persist = <S extends State>(
   if (!storage) {
     return config(
       (...args) => {
-        console.warn(
-          `Persist middleware: unable to update ${name}, the given storage is currently unavailable.`
-        )
+        console.warn(`Persist middleware: unable to update ${name}, the given storage is currently unavailable.`)
         set(...args)
       },
       get,
@@ -259,3 +222,10 @@ export const persist = <S extends State>(
     api
   )
 }
+
+type stateCreatorType = {
+  [key: string]: StateCreator<any>
+}
+export const combineStateCreators = <TState extends State>(
+  stateCreators: stateCreatorType
+): StateCreator<TState> | any => {}
