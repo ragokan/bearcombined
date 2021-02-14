@@ -5,18 +5,8 @@ import { counterStateCreator, ICounterState } from "./CounterStateCreator"
 import { IPokemonState, pokemonStateCreator } from "./PokemonStateCreator"
 import { ITodoState, todoStateCreator } from "./TodoStateCreator"
 
-interface ICombinedStore extends State {
-  counter: ICounterState
-  pokemon: IPokemonState
-  todo: ITodoState
-}
+type ICombinedStore = ICounterState & IPokemonState & ITodoState
 
 export const useCombinedStore = create<ICombinedStore>(
-  devtools(
-    combineStateCreators({
-      counter: counterStateCreator,
-      pokemon: pokemonStateCreator,
-      todo: todoStateCreator,
-    })
-  )
+  devtools(combineStateCreators(counterStateCreator, pokemonStateCreator, todoStateCreator))
 )

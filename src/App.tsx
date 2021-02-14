@@ -5,11 +5,7 @@ import { useCombinedStore } from "./state"
 function App() {
   const [todoText, setTodoText] = useState<string>("")
   const [pokemonText, setPokemonText] = useState<string>("")
-  const {
-    counter: { count, increment },
-    pokemon: { addPokemon, pokemons },
-    todo: { addTodo, filterTodos, todos },
-  } = useCombinedStore()
+  const { count, increment, addPokemon, pokemons, addTodo, filterTodos, todos } = useCombinedStore()
 
   return (
     <div className="App">
@@ -17,11 +13,7 @@ function App() {
         <h2>Counter</h2>
         <h4>{count}</h4>
         <button onClick={() => increment()}>Increment</button>
-        <button
-          onClick={() => useCombinedStore.setState((prev) => ({ counter: { ...prev.counter, count: count - 1 } }))}
-        >
-          Decrement
-        </button>
+        <button onClick={() => useCombinedStore.setState((prev) => ({ count: prev.count - 1 }))}>Decrement</button>
         <hr />
         <h2>Todos</h2>
         <ul>

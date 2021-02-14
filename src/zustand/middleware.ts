@@ -223,18 +223,13 @@ export const persist = <S extends State>(config: StateCreator<S>, options: Persi
   )
 }
 
-interface stateCreatorType {
-  [key: string]: StateCreator<any>
-}
-export const combineStateCreators = <TState extends State>(stateCreators: stateCreatorType): StateCreator<TState> => (
-  set,
-  get,
-  api
-) => {
+export const combineStateCreators = <TState extends State>(
+  ...stateCreators: StateCreator<any>[]
+): StateCreator<TState> => (set, get, api) => {
   let values: any = {}
 
-  Object.entries(stateCreators).forEach((sc) => {
-    values = Object.assign({}, values, { [sc[0]]: sc[1](set, get, api) })
+  stateCreators.forEach((sc) => {
+    values = Object.assign({}, values, sc(set, get, api))
   })
   return values
 }
