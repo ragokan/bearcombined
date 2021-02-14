@@ -223,7 +223,7 @@ export const persist = <S extends State>(config: StateCreator<S>, options: Persi
   )
 }
 
-type stateCreatorType = {
+interface stateCreatorType {
   [key: string]: StateCreator<any>
 }
 export const combineStateCreators = <TState extends State>(stateCreators: stateCreatorType): StateCreator<TState> => (
