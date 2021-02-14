@@ -1,23 +1,16 @@
-import { StateCreator, State } from "../zustand"
+import { State } from "../zustand"
 import { combineStateCreators } from "../zustand/middleware"
+import create from "../zustand/vanilla"
+import { counterStateCreator, ICounterState } from "./CounterStateCreator"
+import { IPokemonState, pokemonStateCreator } from "./PokemonStateCreator"
+import { ITodoState, todoStateCreator } from "./TodoStateCreator"
 
-interface ICounterState extends State {
-  count: number
-  increment: () => void
+interface ICombinedStore extends State {
+  counter: ICounterState
+  pokemon: IPokemonState
+  todo: ITodoState
 }
-interface IPokemonState extends State {
-  pokemons: string[]
-  addPokemon: (name: string) => void
-}
 
-const createState1: StateCreator<ICounterState> = (set, get, api) => ({
-  count: 0,
-  increment: () => set((prev) => ({ count: prev.count + 1 })),
-})
-
-const createState2: StateCreator<IPokemonState> = (set, get, api) => ({
-  pokemons: ["Pikachu"],
-  addPokemon: (name) => set((prev) => ({ pokemons: [name, ...prev.pokemons] })),
-})
-
-combineStateCreators({ foo: createState1, bar: createState2 })
+export const useCombinedStore = create<ICombinedStore>(
+  combineStateCreators({ counter: counterStateCreator, pokemon: pokemonStateCreator, todo: todoStateCreator })
+)
