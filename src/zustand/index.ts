@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useReducer, useRef } from "react"
+import { useEffect, useLayoutEffect, useReducer, useRef } from 'react'
 import createImpl, {
   Destroy,
   EqualityChecker,
@@ -9,11 +9,12 @@ import createImpl, {
   StateSelector,
   Subscribe,
   StoreApi,
-} from "./vanilla"
-export * from "./vanilla"
+} from './vanilla'
+export * from './vanilla'
 
 // For server-side rendering: https://github.com/react-spring/zustand/pull/34
-const useIsoLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect
+const useIsoLayoutEffect =
+  typeof window === 'undefined' ? useEffect : useLayoutEffect
 
 export interface UseStore<T extends State> {
   (): T
@@ -22,13 +23,13 @@ export interface UseStore<T extends State> {
   getState: GetState<T>
   subscribe: Subscribe<T>
   destroy: Destroy
-  getRoot: StateCreator<T>
 }
 
 export default function create<TState extends State>(
   createState: StateCreator<TState> | StoreApi<TState>
 ): UseStore<TState> {
-  const api: StoreApi<TState> = typeof createState === "function" ? createImpl(createState) : createState
+  const api: StoreApi<TState> =
+    typeof createState === 'function' ? createImpl(createState) : createState
 
   const useStore: any = <StateSlice>(
     selector: StateSelector<TState, StateSlice> = api.getState as any,
@@ -61,7 +62,10 @@ export default function create<TState extends State>(
     ) {
       // Using local variables to avoid mutations in the render phase.
       newStateSlice = selector(state)
-      hasNewStateSlice = !equalityFn(currentSliceRef.current as StateSlice, newStateSlice)
+      hasNewStateSlice = !equalityFn(
+        currentSliceRef.current as StateSlice,
+        newStateSlice
+      )
     }
 
     // Syncing changes in useEffect.
@@ -81,7 +85,12 @@ export default function create<TState extends State>(
         try {
           const nextState = api.getState()
           const nextStateSlice = selectorRef.current(nextState)
-          if (!equalityFnRef.current(currentSliceRef.current as StateSlice, nextStateSlice)) {
+          if (
+            !equalityFnRef.current(
+              currentSliceRef.current as StateSlice,
+              nextStateSlice
+            )
+          ) {
             stateRef.current = nextState
             currentSliceRef.current = nextStateSlice
             forceUpdate()
@@ -98,14 +107,18 @@ export default function create<TState extends State>(
       return unsubscribe
     }, [])
 
-    return hasNewStateSlice ? (newStateSlice as StateSlice) : currentSliceRef.current
+    return hasNewStateSlice
+      ? (newStateSlice as StateSlice)
+      : currentSliceRef.current
   }
 
   Object.assign(useStore, api)
 
   // For backward compatibility (No TS types for this)
   useStore[Symbol.iterator] = function* () {
-    console.warn("[useStore, api] = create() is deprecated and will be removed in v4")
+    console.warn(
+      '[useStore, api] = create() is deprecated and will be removed in v4'
+    )
     yield useStore
     yield api
   }

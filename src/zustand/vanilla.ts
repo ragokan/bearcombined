@@ -1,5 +1,7 @@
 export type State = Record<string | number | symbol, unknown>
-export type PartialState<T extends State> = Partial<T> | ((state: T) => Partial<T>)
+export type PartialState<T extends State> =
+  | Partial<T>
+  | ((state: T) => Partial<T>)
 export type StateSelector<T extends State, U> = (state: T) => U
 export type EqualityChecker<T> = (state: T, newState: T) => boolean
 export type StateListener<T> = (state: T, previousState: T) => void
@@ -12,14 +14,16 @@ export interface Subscribe<T extends State> {
     equalityFn?: EqualityChecker<StateSlice>
   ): () => void
 }
-export type SetState<T extends State> = (partial: PartialState<T>, replace?: boolean) => void
+export type SetState<T extends State> = (
+  partial: PartialState<T>,
+  replace?: boolean
+) => void
 export type GetState<T extends State> = () => T
 export type Destroy = () => void
 export interface StoreApi<T extends State> {
   setState: SetState<T>
   getState: GetState<T>
   subscribe: Subscribe<T>
-  getRoot: StateCreator<T>
   destroy: Destroy
 }
 export type StateCreator<T extends State, CustomSetState = SetState<T>> = (
@@ -28,22 +32,24 @@ export type StateCreator<T extends State, CustomSetState = SetState<T>> = (
   api: StoreApi<T>
 ) => T
 
-export default function create<TState extends State>(createState: StateCreator<TState>): StoreApi<TState> {
+export default function create<TState extends State>(
+  createState: StateCreator<TState>
+): StoreApi<TState> {
   let state: TState
   const listeners: Set<StateListener<TState>> = new Set()
 
   const setState: SetState<TState> = (partial, replace) => {
-    const nextState = typeof partial === "function" ? partial(state) : partial
+    const nextState = typeof partial === 'function' ? partial(state) : partial
     if (nextState !== state) {
       const previousState = state
-      state = replace ? (nextState as TState) : Object.assign({}, state, nextState)
+      state = replace
+        ? (nextState as TState)
+        : Object.assign({}, state, nextState)
       listeners.forEach((listener) => listener(state, previousState))
     }
   }
 
   const getState: GetState<TState> = () => state
-
-  const getRoot: StateCreator<TState> = createState
 
   const subscribeWithSelector = <StateSlice>(
     listener: StateSliceListener<StateSlice>,
@@ -69,7 +75,11 @@ export default function create<TState extends State>(createState: StateCreator<T
     equalityFn?: EqualityChecker<StateSlice>
   ) => {
     if (selector || equalityFn) {
-      return subscribeWithSelector(listener as StateSliceListener<StateSlice>, selector, equalityFn)
+      return subscribeWithSelector(
+        listener as StateSliceListener<StateSlice>,
+        selector,
+        equalityFn
+      )
     }
     listeners.add(listener as StateListener<TState>)
     // Unsubscribe
@@ -77,7 +87,7 @@ export default function create<TState extends State>(createState: StateCreator<T
   }
 
   const destroy: Destroy = () => listeners.clear()
-  const api = { setState, getState, subscribe, destroy, getRoot }
+  const api = { setState, getState, subscribe, destroy }
   state = createState(setState, getState, api)
   return api
 }
